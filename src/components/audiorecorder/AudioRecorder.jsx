@@ -55,8 +55,14 @@ function AudioRecorder() {
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudio(audioUrl);
             setAudioChunks([]);
+            document.getElementById("audio-download").setAttribute("download", generateFileName());
         };
     };
+
+
+    const generateFileName = () => {
+        return "testing.mp3"
+    }
 
     return (
         <div>
@@ -94,8 +100,8 @@ function AudioRecorder() {
                             src={audio}
                             controls
                         ></audio>
-                        <a
-                            download={"put_your_name_here"}
+                        <a id="audio-download"
+                            download={generateFileName()}
                             href={audio}
                         >
                             Download Recording

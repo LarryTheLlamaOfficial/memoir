@@ -95,7 +95,7 @@ function AudioRecorder() {
                             controls
                         ></audio>
                         <a
-                            download
+                            download={"put_your_name_here"}
                             href={audio}
                         >
                             Download Recording

@@ -1,4 +1,7 @@
 import { useState, useRef } from "react";
+import axios from 'axios'
+import fileDownload from 'js-file-download'
+
 
 const mimeType = "audio/mp3";
 
@@ -9,6 +12,15 @@ function AudioRecorder() {
     const [stream, setStream] = useState(null);
     const [audioChunks, setAudioChunks] = useState([]);
     const [audio, setAudio] = useState(null);
+
+    const handleDownload = () => {
+        axios.get(audio, {
+          responseType: 'blob',
+        })
+        .then((res) => {
+          fileDownload(res.data, generateFileName())
+        })
+      }
 
     const getMicrophonePermission = async () => {
         if ("MediaRecorder" in window) {
@@ -55,14 +67,20 @@ function AudioRecorder() {
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudio(audioUrl);
             setAudioChunks([]);
-            document.getElementById("audio-download").setAttribute("download", generateFileName());
         };
     };
 
-
     const generateFileName = () => {
-        return "testing.mp3"
-    }
+        const date = new Date();
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().padStart(4, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        return `memo-${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+    };
 
     return (
         <div>
@@ -100,12 +118,11 @@ function AudioRecorder() {
                             src={audio}
                             controls
                         ></audio>
-                        <a id="audio-download"
-                            download={generateFileName()}
-                            href={audio}
+                        <button
+                            onClick={handleDownload}
                         >
                             Download Recording
-                        </a>
+                        </button>
                     </div>
                 ) : null}
             </main>

@@ -20,7 +20,7 @@ const defaultMimeType = "audio/mp3";
 
 // Create audio recorder object
 function AudioRecorder({
-    setParentAudio = () => {},
+    onRecordingStop = () => {},
     mimeType = defaultMimeType,
     generateFileName = defaultGenerateFileName
 }) {
@@ -80,7 +80,7 @@ function AudioRecorder({
             setAudio(audioUrl);
 
             // Give the parent object access to the audio file
-            setParentAudio(audioUrl);
+            onRecordingStop(audioUrl);
 
             // Clear audio
             setAudioChunks([]);

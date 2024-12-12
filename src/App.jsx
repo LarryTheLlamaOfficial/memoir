@@ -9,7 +9,7 @@ function App() {
         <div>
             <h1>React Media Recorder</h1>
             <div>
-                <AudioRecorder />
+                <AudioRecorder setParentAudio={(url)=>{console.log(url)}} />
             </div>
         </div>
     );

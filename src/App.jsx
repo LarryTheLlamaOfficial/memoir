@@ -1,17 +1,33 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import AudioRecorder from "./components/audiorecorder/AudioRecorder";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home';
+import Login from './pages/Login';
+import NoPage from './pages/NoPage';
 
 function App() {
     return (
-        <div>
-            <h1>React Media Recorder</h1>
-            <div>
-                <AudioRecorder onRecordingStop={(url)=>{console.log(url)}} />
-            </div>
-        </div>
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route
+                        index
+                        element={<Home />}
+                    ></Route>
+                    <Route
+                        path='/home'
+                        element={<Home />}
+                    ></Route>
+                    <Route
+                        path='/login'
+                        element={<Login />}
+                    ></Route>
+                    <Route
+                        path='*'
+                        element={<NoPage />}
+                    ></Route>
+                </Routes>
+            </BrowserRouter>
+        </>
     );
 }
 export default App;

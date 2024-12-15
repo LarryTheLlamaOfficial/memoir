@@ -21,3 +21,14 @@
 .header-right {
     float: right;
 }
+
+@media screen and (max-width: 500px) {
+    .link {
+      float: none;
+      display: block;
+      text-align: left;
+    }
+    .header-right {
+      float: none;
+    }
+  }

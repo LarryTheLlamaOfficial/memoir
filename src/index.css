@@ -2,8 +2,6 @@ body {
     font-size: 62.5%;
 }
 
-
-
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;

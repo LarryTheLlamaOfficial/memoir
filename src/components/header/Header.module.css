@@ -1,9 +1,23 @@
-.logo {
-    font-family: 'Quicksand', sans-serif;
-    font-size: 3em;
+.header {
+    overflow: hidden;
+    background-color: #ffffff;
+    padding: 20px 10px;
 }
 
 .link {
-    font-family: 'Quicksand', sans-serif;
+    float: left;
+    color: black;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 1.8em;
+    line-height: 25px;
+    border-radius: 4px;
+
+    font-family: var(--main-font), sans-serif;
     font-size: 3em;
+}
+
+.header-right {
+    float: right;
 }

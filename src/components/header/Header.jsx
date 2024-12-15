@@ -6,7 +6,7 @@ function Header() {
         <div className={styles.header}>
             <Link
                 to='/home'
-                className={styles.logo}
+                className={[styles.logo, styles.link].join(' ')}
             >
                 memoir
             </Link>
@@ -25,6 +25,12 @@ function Header() {
                 </Link>
                 <Link
                     to='/about'
+                    className={styles.link}
+                >
+                    About
+                </Link>
+                <Link
+                    to='/login'
                     className={styles.link}
                 >
                     Login

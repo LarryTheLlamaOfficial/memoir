@@ -1,5 +1,10 @@
 import { auth, googleProvider } from "../config/firebase";
-import { createUserWithEmailAndPassword, signInWithPopup, signOut, signInWithRedirect } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    signInWithRedirect,
+} from "firebase/auth";
 import { useState } from "react";
 
 function Auth() {
@@ -8,9 +13,17 @@ function Auth() {
 
     console.log(auth?.currentUser?.email);
 
-    const signIn = async () => {
+    const signUp = async () => {
         try {
             await createUserWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const signIn = async () => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
         }
@@ -44,6 +57,7 @@ function Auth() {
                 type='password'
             />
             <button onClick={signIn}>Sign In</button>
+            <button onClick={signUp}>Sign Up</button>
             <button onClick={signInWithGoogle}>Sign In With Google</button>
             <button onClick={logout}>Logout</button>
         </div>

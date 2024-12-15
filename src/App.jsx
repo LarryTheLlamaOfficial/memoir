@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from './pages/Home';
-import Login from './pages/Login';
-import NoPage from './pages/NoPage';
+import Home from './pages/home/Home';
+import Login from './pages/login/Login';
+import NoPage from './pages/nopage/NoPage';
 
 function App() {
     return (

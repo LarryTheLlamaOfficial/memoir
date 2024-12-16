@@ -8,7 +8,6 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 function Auth() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -28,24 +27,22 @@ function Auth() {
     const signIn = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            navigate('/home')
-            
+            navigate("/home");
         } catch (err) {
             console.error(err);
 
             switch (err.code) {
-
-                case 'auth/invalid-email':
-                    alert('Invalid email.');
+                case "auth/invalid-email":
+                    alert("Invalid email.");
                     break;
-                case 'auth/user-not-found':
-                    alert('No user found.');
+                case "auth/user-not-found":
+                    alert("No user found.");
                     break;
-                case 'auth/wrong-password':
-                    alert('Incorrect password.');
+                case "auth/wrong-password":
+                    alert("Incorrect password.");
                     break;
                 default:
-                    alert('Login failed. Please try again.');
+                    alert("Login failed. Please try again.");
             }
         }
     };

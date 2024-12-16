@@ -1,6 +1,6 @@
 
 import googleLogo from '../../assets/icons/google.svg';
-import Auth from '../../auth/Auth';
+import Auth from '../../components/auth/Auth';
 
 
 function Login() {

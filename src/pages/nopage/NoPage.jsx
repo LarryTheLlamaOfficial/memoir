@@ -5,8 +5,8 @@ function NoPage() {
     return (
         <>
             <Header />
-            <div className={styles['center-container']}>
-                <span className={styles['error-message']}>Page not found :(</span>
+            <div>
+                <span>Page not found :(</span>
             </div>
         </>
     );

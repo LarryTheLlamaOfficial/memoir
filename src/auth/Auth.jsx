@@ -18,6 +18,7 @@ function Auth() {
             await createUserWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
+            alert("Failed to create user");
         }
     };
 
@@ -26,7 +27,7 @@ function Auth() {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
-            alert('Login Failed')
+            alert("Login Failed");
         }
     };
 

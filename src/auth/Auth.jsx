@@ -26,6 +26,7 @@ function Auth() {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
+            alert('Login Failed')
         }
     };
 

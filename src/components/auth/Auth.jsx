@@ -14,10 +14,12 @@ function Auth() {
     const navigate = useNavigate();
 
     console.log(auth?.currentUser?.email);
+    console.log(auth.currentUser, auth);
 
     const signUp = async () => {
         try {
             await createUserWithEmailAndPassword(auth, email, password);
+            navigate("/home");
         } catch (err) {
             console.error(err);
             alert("Failed to create user");
@@ -27,6 +29,7 @@ function Auth() {
     const signIn = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            
             navigate("/home");
         } catch (err) {
             console.error(err);
@@ -49,7 +52,10 @@ function Auth() {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithRedirect(auth, googleProvider);
+            await signInWithRedirect(auth, googleProvider).then(
+                () => {navigate("/home");}
+            );
+            
         } catch (err) {
             console.error(err);
         }

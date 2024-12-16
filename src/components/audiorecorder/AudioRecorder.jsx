@@ -1,6 +1,9 @@
 import { useState, useRef } from "react";
 import axios from 'axios'
 import fileDownload from 'js-file-download'
+import { auth, storage } from "../../config/firebase";
+import { uploadBytes, ref } from "firebase/storage";
+
 
 // Default file name generator, can be replaced
 const defaultGenerateFileName = () => {
@@ -30,7 +33,24 @@ function AudioRecorder({
     const [recordingStatus, setRecordingStatus] = useState("inactive");
     const [stream, setStream] = useState(null);
     const [audioChunks, setAudioChunks] = useState([]);
+    const [audioBlob, setAudioBlob] = useState(null);
     const [audio, setAudio] = useState(null);
+
+    const uploadAudio = async () => {
+        const userId = auth?.currentUser?.uid;
+        console.log(userId)
+        if (userId) {
+            const audioFileName = defaultGenerateFileName() + '.mp3';
+            const storageRef = ref(storage, `users/${userId}/audio/${audioFileName}`);
+            try {
+                await uploadBytes(storageRef, audioBlob);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            alert("Cannot upload unless signed in")
+        }
+    }
 
     // Get browser microhone permission
     const getMicrophonePermission = async () => {
@@ -73,10 +93,11 @@ function AudioRecorder({
         mediaRecorder.current.stop();
         mediaRecorder.current.onstop = () => {
             // Creates a blob file from the audiochunks data
-            const audioBlob = new Blob(audioChunks, { type: mimeType });
+            const newAudioBlob = new Blob(audioChunks, { type: mimeType });
+            setAudioBlob(newAudioBlob);
 
             // Creates a playable URL from the blob file.
-            const audioUrl = URL.createObjectURL(audioBlob);
+            const audioUrl = URL.createObjectURL(newAudioBlob);
             setAudio(audioUrl);
 
             // Give the parent object access to the audio file
@@ -116,6 +137,9 @@ function AudioRecorder({
                             Stop Recording
                         </button>
                     ) : null}
+                    <button onClick={uploadAudio}>
+                        Upload
+                    </button>
                 </div>
             </main>
         </div>

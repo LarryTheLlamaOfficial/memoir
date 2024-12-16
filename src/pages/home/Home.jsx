@@ -6,6 +6,8 @@ import { getDocs, getDoc, collection } from "firebase/firestore";
 
 import { useEffect, useState, useMemo } from "react";
 
+import AudioRecorder from "../../components/audiorecorder/AudioRecorder.jsx";
+
 function Home() {
     const [testList, setTestList] = useState([]);
 
@@ -27,8 +29,7 @@ function Home() {
     return (
         <>
             <Header />
-            <button></button>
-            <p></p>
+            <AudioRecorder/>
         </>
     );
 }

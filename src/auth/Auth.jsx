@@ -21,6 +21,7 @@ function Auth() {
             await createUserWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
+            alert("Failed to create user");
         }
     };
 

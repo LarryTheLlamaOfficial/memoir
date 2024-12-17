@@ -16,6 +16,17 @@ function Auth() {
     console.log(auth?.currentUser?.email);
     console.log(auth.currentUser, auth);
 
+    const testUserSignIn = async () => {
+        try {
+            await signInWithEmailAndPassword(auth, "testing@gmail.com", "123456");
+            navigate("/home");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to sign in as test user.");
+        }
+    };
+    
+
     const signUp = async () => {
         try {
             await createUserWithEmailAndPassword(auth, email, password);
@@ -63,28 +74,36 @@ function Auth() {
 
     const logout = async () => {
         try {
-            await signOut(auth);
+            await signOut(auth).then(
+                () => {navigate("/home");}
+            );
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <div>
-            <input
-                placeholder='Email...'
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                placeholder='Password...'
-                onChange={(e) => setPassword(e.target.value)}
-                type='password'
-            />
-            <button onClick={signIn}>Sign In</button>
-            <button onClick={signUp}>Sign Up</button>
-            <button onClick={signInWithGoogle}>Sign In With Google</button>
-            <button onClick={logout}>Logout</button>
-        </div>
+        <>
+            { auth?.currentUser?.uid ? 
+                <button onClick={logout}>Logout</button>
+                :
+                <div>
+                    <input
+                    placeholder='Email...'
+                    onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        placeholder='Password...'
+                        onChange={(e) => setPassword(e.target.value)}
+                        type='password'
+                    />
+                    <button onClick={signIn}>Sign In</button>
+                    <button onClick={signUp}>Sign Up</button>
+                    <button onClick={signInWithGoogle}>Sign In With Google</button>
+                    <button onClick={testUserSignIn}>Test User Sign In</button>
+                </div>
+            }
+        </>
     );
 }
 

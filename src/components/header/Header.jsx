@@ -35,6 +35,12 @@ function Header() {
                 >
                     Login
                 </Link>
+                <Link
+                    to='/record'
+                    className={styles.link}
+                >
+                    Record
+                </Link>
             </div>
         </div>
     );

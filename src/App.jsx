@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
 import NoPage from './pages/nopage/NoPage';
+import Record from "./pages/record/Record";
 
 function App() {
     return (
@@ -21,6 +22,10 @@ function App() {
                     <Route
                         path='/login'
                         element={<Login />}
+                    ></Route>
+                    <Route
+                        path='/record'
+                        element={<Record />}
                     ></Route>
                     <Route
                         path='*'

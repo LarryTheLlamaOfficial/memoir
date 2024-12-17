@@ -1,5 +1,7 @@
 import styles from "./Header.module.css";
 import { Link } from "react-router-dom";
+import { auth } from "../../config/firebase";
+import { signOut } from "firebase/auth";
 
 function Header() {
     return (
@@ -29,18 +31,42 @@ function Header() {
                 >
                     About
                 </Link>
-                <Link
-                    to='/login'
-                    className={styles.link}
-                >
-                    Login
-                </Link>
-                <Link
-                    to='/record'
-                    className={styles.link}
-                >
-                    Record
-                </Link>
+                {auth?.currentUser?.uid ?
+                <>
+                    <Link
+                        to='/record'
+                        className={styles.link}
+                    >
+                        Record
+                    </Link>
+                    <Link 
+                        to='/record'
+                        className={styles.link}
+                        onClick={
+                            async (event) => {
+                                try {
+                                    await signOut(auth).then(
+                                        () => {navigate("/home");}
+                                    );
+                                } catch (err) {
+                                    console.error(err);
+                                    event.preventDefault()
+                                }
+                            }
+                        }
+                    >
+                        Logout
+                    </Link>
+                </>
+                :
+                    <Link
+                        to='/login'
+                        className={styles.link}
+                    >
+                        Login
+                    </Link>
+                }
+
             </div>
         </div>
     );

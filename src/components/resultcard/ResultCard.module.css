@@ -1,0 +1,49 @@
+:root {
+    --card-size: 45px;
+}
+
+@property --padding {
+    syntax: "<length>";
+    initial-value: 0px;
+    inherits: true;
+}
+
+.result-card {
+    flex: 0 0 auto;
+    position: relative;
+    width: auto;
+    max-height: var(--card-size); /* Set height for the overall shape */
+    background-color: #f0f0f0; /* Background for outer capsule */
+    border-radius: calc(var(--card-size) / 2); /* Full capsule shape */
+    overflow: hidden; /* Clip any overflowing content */
+
+    transition-property: --padding, max-height;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
+    /*transition: --padding 0.3s ease, max-height 0.3s ease;*/
+}
+
+.card-content-container {
+    height: 100%; /* Fill the height of result-card */
+    width: 100%;  /* Fill the width of result-card */
+    padding: var(--padding); /* Add space between outer and inner capsules */
+    box-sizing: border-box; /* Include padding in dimensions */
+    background-color: transparent;
+    height: var(--card-size);
+}
+
+.card-content {
+    width: 100%; /* Fill the padded container */
+    height: 100%;
+    background-color: aqua; /* Inner capsule color */
+    border-radius: calc((var(--card-size) / 2) - var(--padding)); /* Adjust for padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.result-card:hover {
+    --padding: 8px;
+    max-height: 150px;
+}

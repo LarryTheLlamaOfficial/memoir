@@ -3,7 +3,7 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    signInWithRedirect,
+    signInWithPopup,
 } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +63,7 @@ function Auth() {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithRedirect(auth, googleProvider).then(
+            await signInWithPopup(auth, googleProvider).then(
                 () => {navigate("/home");}
             );
             

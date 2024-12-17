@@ -40,14 +40,12 @@ function Header() {
                         Record
                     </Link>
                     <Link 
-                        to='/record'
+                        to='/home'
                         className={styles.link}
                         onClick={
                             async (event) => {
                                 try {
-                                    await signOut(auth).then(
-                                        () => {navigate("/home");}
-                                    );
+                                    await signOut(auth);
                                 } catch (err) {
                                     console.error(err);
                                     event.preventDefault()

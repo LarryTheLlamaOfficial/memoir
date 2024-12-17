@@ -2,8 +2,10 @@ import styles from "./Header.module.css";
 import { Link } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+    const navigate = useNavigate();
     return (
         <div className={styles.header}>
             <Link
@@ -44,11 +46,13 @@ function Header() {
                         className={styles.link}
                         onClick={
                             async (event) => {
+                                event.preventDefault()
                                 try {
                                     await signOut(auth);
+                                    navigate('/home')
                                 } catch (err) {
                                     console.error(err);
-                                    event.preventDefault()
+                                    
                                 }
                             }
                         }

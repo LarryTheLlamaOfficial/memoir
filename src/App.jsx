@@ -5,6 +5,7 @@ import Home from './pages/home/Home';
 import Login from './pages/login/Login';
 import NoPage from './pages/nopage/NoPage';
 import Record from "./pages/record/Record";
+import TestGet from "./pages/testget/Testget";
 
 function App() {
     return (
@@ -26,6 +27,10 @@ function App() {
                     <Route
                         path='/record'
                         element={<Record />}
+                    ></Route>
+                    <Route
+                        path='/testget'
+                        element={<TestGet />}
                     ></Route>
                     <Route
                         path='*'

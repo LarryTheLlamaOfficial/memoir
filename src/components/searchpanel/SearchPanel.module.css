@@ -1,0 +1,14 @@
+.row {
+    flex: 0 0 auto;
+}
+
+.content {
+    height:500px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: column;
+    flex-wrap: nowrap;
+    background: pink;
+    overflow-y: scroll;
+}
+

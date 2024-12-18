@@ -207,7 +207,9 @@ export const createTranscript = functions.storage.onObjectFinalized(
                 }
 
                 const transcript =
-                    result?.channels?.[0]?.alternatives?.[0]?.transcript;
+                    result?.results?.channels?.[0]?.alternatives?.[0]?.transcript;
+                logger.log(result);
+
                 if (transcript) {
                     functions.logger.log(`Transcript: ${transcript}`);
 

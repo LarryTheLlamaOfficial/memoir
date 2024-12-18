@@ -15,7 +15,7 @@ import axios from "axios";
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
-    storageBucket: 'memoir-1296.firebasestorage.app',
+    storageBucket: "memoir-1296.firebasestorage.app",
 });
 
 // Start writing functions
@@ -136,12 +136,15 @@ export const createTranscript = functions.storage.onObjectFinalized(
         const filePath = object.data.name; // File path in the bucket.
         const contentType = object.data.contentType;
 
+        logger.log(fileBucket);
+        logger.log(filePath);
+        logger.log(contentType);
+
         if (fileBucket != "memoir-1296.firebasestorage.app") {
             logger.log("Accessing from wrong bucket");
             return;
         }
 
-        
         if (contentType != "audio/mp3") {
             logger.log("Not an audio file. Actual type");
             return;
@@ -156,7 +159,7 @@ export const createTranscript = functions.storage.onObjectFinalized(
 
         if (split[0] == "users" && split[2] == "audio") {
             const uid = split[1];
-            const rawFileName = split[4];
+            const rawFileName = split[3];
             functions.logger.log(
                 `Processing audio file for user: ${uid}, file: ${rawFileName}`
             );
@@ -169,12 +172,17 @@ export const createTranscript = functions.storage.onObjectFinalized(
             }
 
             const file = admin.storage().bucket(fileBucket).file(filePath);
-            const [url] = await file.getSignedUrl({
-                action: "read",
-                expires: Date.now() + 60 * 60 * 1000, // 1 hour expiration
-            });
-
-            functions.logger.log(`Generated signed URL for file: ${url}`);
+            var [url] = "";
+            try {
+                [url] = await file.getSignedUrl({
+                    action: "read",
+                    expires: Date.now() + 60 * 60 * 1000, // 1 hour expiration
+                });
+                logger.log(`Generated signed URL for file: ${url}`);
+            } catch (error) {
+                logger.error("Error generating signed URL", error);
+                return;
+            }
 
             try {
                 // Perform the API request to Deepgram
@@ -183,7 +191,7 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     { url: url },
                     {
                         headers: {
-                            "Authorization": `Token ${deepgramKey}`,
+                            Authorization: `Token ${deepgramKey}`,
                             "Content-Type": "application/json",
                         },
                     }
@@ -191,7 +199,10 @@ export const createTranscript = functions.storage.onObjectFinalized(
 
                 const { result, error } = response.data;
                 if (error) {
-                    functions.logger.error("Error with Deepgram transcription", error);
+                    functions.logger.error(
+                        "Error with Deepgram transcription",
+                        error
+                    );
                     return;
                 }
 

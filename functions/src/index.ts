@@ -197,11 +197,12 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     }
                 );
 
-                const { result, error } = response.data;
-                if (error) {
+                logger.log(response);
+
+                const result = response.data;
+                if (!result) {
                     functions.logger.error(
-                        "Error with Deepgram transcription",
-                        error
+                        "Error with Deepgram transcription"
                     );
                     return;
                 }

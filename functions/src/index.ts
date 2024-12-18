@@ -141,8 +141,9 @@ export const createTranscript = functions.storage.onObjectFinalized(
             return;
         }
 
-        if (contentType != "audio/mpeg") {
-            logger.log("Not an audio file");
+        
+        if (contentType != "audio/mp3") {
+            logger.log("Not an audio file. Actual type");
             return;
         }
 

@@ -21,7 +21,6 @@ admin.initializeApp({
 export const createTranscript = functions.storage.onObjectFinalized(
     {
         secrets: ["DEEPGRAM_KEY"],
-        region: "australia-southeast1",
     },
     async (object) => {
         const fileBucket = object.data.bucket; // Storage bucket containing the file.
@@ -145,7 +144,6 @@ export const makeSummary = functions.firestore.onDocumentCreated(
     {
         document: "transcripts/{docId}",
         secrets: ["OPENAI_KEY"],
-        region: "australia-southeast1",
     },
     async (event) => {
         const snapshot = event.data;

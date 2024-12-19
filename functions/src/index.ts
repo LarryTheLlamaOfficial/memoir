@@ -11,7 +11,10 @@
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import axios from "axios";
+
+const storage = getStorage();
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -107,7 +110,7 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     // Optionally save the transcript to Firestore
                     await admin.firestore().collection("transcripts").add({
                         uid: uid,
-                        audioFile: filePath,
+                        //audioFile: filePath,
                         transcript: transcript,
                         summary_generated: false,
                         summary: "",
@@ -117,6 +120,14 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     });
 
                     functions.logger.log("Transcript saved to Firestore");
+
+                    const audioRef = ref(storage, 'images');
+
+                    deleteObject(audioRef).then(() => {
+                        logger.log("Deleted audio file")
+                    }).catch((error) => {
+                        logger.log("Failed to delete audio file");
+                    });
                 } else {
                     functions.logger.log("No transcript found in the result");
                 }

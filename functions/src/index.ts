@@ -142,7 +142,7 @@ export const makeSummary = functions.firestore.onDocumentCreated(
         const transcript = data.transcript;
         const openaiKey = process.env.OPENAI_KEY;
 
-        const updateData: Record<string, string> = {};
+        const updateData: Record<string, any> = {};
 
         if (data.summary_generated) {
             logger.log("Summary already generated");
@@ -172,6 +172,7 @@ export const makeSummary = functions.firestore.onDocumentCreated(
             const summary = result?.choices?.[0]?.message.content;
             if (summary) {
                 updateData["summary"] = summary;
+                updateData["summary_generated"] = true;
             } else {
                 logger.log("Error with summary API call");
             }
@@ -207,6 +208,7 @@ export const makeSummary = functions.firestore.onDocumentCreated(
                 updateData["dotpoint"] = dotpoint;
             } else {
                 logger.log("Error with summary API call");
+                updateData["dotpoint_generated"] = true;
             }
         }
 

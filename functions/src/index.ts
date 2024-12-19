@@ -13,8 +13,6 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import axios from "axios";
 
-
-
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     storageBucket: "memoir-1296.firebasestorage.app",
@@ -23,6 +21,7 @@ admin.initializeApp({
 export const createTranscript = functions.storage.onObjectFinalized(
     {
         secrets: ["DEEPGRAM_KEY"],
+        region: "australia-southeast1",
     },
     async (object) => {
         const fileBucket = object.data.bucket; // Storage bucket containing the file.
@@ -113,7 +112,7 @@ export const createTranscript = functions.storage.onObjectFinalized(
                         transcript: transcript,
                         summary_generated: false,
                         summary: "",
-                        dotpoint_generated: false,
+                        dotpoint_generated: true,
                         dotpoint: "",
                         createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     });
@@ -121,7 +120,11 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     functions.logger.log("Transcript saved to Firestore");
 
                     try {
-                        await admin.storage().bucket(fileBucket).file(filePath).delete();
+                        await admin
+                            .storage()
+                            .bucket(fileBucket)
+                            .file(filePath)
+                            .delete();
                         logger.log("Deleted audio file successfully");
                     } catch (error) {
                         logger.error("Failed to delete audio file", error);
@@ -139,7 +142,11 @@ export const createTranscript = functions.storage.onObjectFinalized(
 );
 
 export const makeSummary = functions.firestore.onDocumentCreated(
-    { document: "transcripts/{docId}", secrets: ["OPENAI_KEY"] },
+    {
+        document: "transcripts/{docId}",
+        secrets: ["OPENAI_KEY"],
+        region: "australia-southeast1",
+    },
     async (event) => {
         const snapshot = event.data;
         if (!snapshot) {
@@ -162,11 +169,15 @@ export const makeSummary = functions.firestore.onDocumentCreated(
                 {
                     model: "gpt-4o-mini",
                     messages: [
-                        { role: "system", content: "Summarize the given audio transcript of an idea into one sentence. There may be typos in the transcript. Focus on specific details to distinguish it from potentially similar ideas. Start directly with the main idea, avoiding phrases like 'The idea is that' or 'The idea proposes that'." },
+                        {
+                            role: "system",
+                            content:
+                                "Summarize the given audio transcript of an idea into one sentence. There may be typos in the transcript. Focus on specific details to distinguish it from potentially similar ideas. Start directly with the main idea, avoiding phrases like 'The idea is that' or 'The idea proposes that'.",
+                        },
                         { role: "user", content: transcript },
                     ],
                     temperature: 0.2,
-                    max_tokens: 500
+                    max_tokens: 500,
                 },
                 {
                     headers: {
@@ -177,7 +188,7 @@ export const makeSummary = functions.firestore.onDocumentCreated(
             );
 
             const result = response.data;
-            
+
             const summary = result?.choices?.[0]?.message.content;
             if (summary) {
                 updateData["summary"] = summary;
@@ -196,11 +207,14 @@ export const makeSummary = functions.firestore.onDocumentCreated(
                 {
                     model: "gpt-4o-mini",
                     messages: [
-                        { role: "system", content: "Create 3 dot points of the following:" },
+                        {
+                            role: "system",
+                            content: "Create 3 dot points of the following:",
+                        },
                         { role: "user", content: transcript },
                     ],
                     temperature: 0.2,
-                    max_tokens: 100
+                    max_tokens: 100,
                 },
                 {
                     headers: {
@@ -211,13 +225,13 @@ export const makeSummary = functions.firestore.onDocumentCreated(
             );
 
             const result = response.data;
-            
+
             const dotpoint = result?.choices?.[0]?.message.content;
             if (dotpoint) {
                 updateData["dotpoint"] = dotpoint;
+                updateData["dotpoint_generated"] = true;
             } else {
                 logger.log("Error with summary API call");
-                updateData["dotpoint_generated"] = true;
             }
         }
 

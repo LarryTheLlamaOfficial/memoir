@@ -18,115 +18,6 @@ admin.initializeApp({
     storageBucket: "memoir-1296.firebasestorage.app",
 });
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-/*
-export const createTranscript = functions.storage.onObjectFinalized(
-    {
-        secrets: ["DEEPGRAM_KEY"],
-    },
-    async (object) => {
-        const fileBucket = object.data.bucket; // Storage bucket containing the file.
-        const filePath = object.data.name; // File path in the bucket.
-        const contentType = object.data.contentType;
-
-        if (fileBucket != "memoir-1296.firebasestorage.app") {
-            logger.log("Accessing from wrong bucket");
-            return;
-        }
-
-        if (contentType != "audio/mpeg") {
-            logger.log("Not an audio file");
-            return;
-        }
-
-        const split = filePath.split("/");
-
-        if (split.length != 4) {
-            logger.log("Must be length 4");
-            return;
-        }
-
-        if (split[0] == "users" && split[2] == "audio") {
-            const uid = split[1];
-            const rawFileName = split[4];
-            functions.logger.log(
-                `Processing audio file for user: ${uid}, file: ${rawFileName}`
-            );
-
-            const deepgramKey = process.env.DEEPGRAM_KEY;
-
-            if (!deepgramKey) {
-                functions.logger.error("Deepgram key is missing!");
-                return;
-            }
-
-            const file = admin.storage().bucket(fileBucket).file(filePath);
-            const [url] = await file.getSignedUrl({
-                action: "read",
-                expires: Date.now() + 60 * 60 * 1000,
-            });
-
-            functions.logger.log(`Generated signed URL for file: ${url}`);
-
-            const deepgram = createClient(deepgramKey);
-
-            try {
-                const { result, error } =
-                    await deepgram.listen.prerecorded.transcribeUrl(
-                        {
-                            url: url,
-                        },
-                        {
-                            model: "nova-2",
-                            smart_format: true,
-                        }
-                    );
-
-                if (error) {
-                    functions.logger.error(
-                        "Error with Deepgram transcription",
-                        error
-                    );
-                    return;
-                }
-                const transcript =
-                    result.results.channels[0]?.alternatives[0]?.transcript;
-                if (transcript) {
-                    functions.logger.log(`Transcript: ${transcript}`);
-
-                    // Optionally save the transcript to Firestore
-                    await admin.firestore().collection("transcripts").add({
-                        uid: uid,
-                        audioFile: filePath,
-                        transcript: transcript,
-                        summary_generated: false,
-                        summary: "",
-                        dotpoint_generated: false,
-                        dotpoint: "",
-                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    });
-
-                    functions.logger.log("Transcript saved to Firestore");
-                } else {
-                    functions.logger.log("No transcript found in the result");
-                }
-            } catch (error) {
-                functions.logger.error("Error calling Deepgram API", error);
-            }
-        } else {
-            functions.logger.log("Path does not match the expected pattern");
-        }
-    }
-);
-*/
-
 export const createTranscript = functions.storage.onObjectFinalized(
     {
         secrets: ["DEEPGRAM_KEY"],
@@ -201,14 +92,13 @@ export const createTranscript = functions.storage.onObjectFinalized(
 
                 const result = response.data;
                 if (!result) {
-                    functions.logger.error(
-                        "Error with Deepgram transcription"
-                    );
+                    functions.logger.error("Error with Deepgram transcription");
                     return;
                 }
 
                 const transcript =
-                    result?.results?.channels?.[0]?.alternatives?.[0]?.transcript;
+                    result?.results?.channels?.[0]?.alternatives?.[0]
+                        ?.transcript;
                 logger.log(result);
 
                 if (transcript) {
@@ -235,6 +125,99 @@ export const createTranscript = functions.storage.onObjectFinalized(
             }
         } else {
             functions.logger.log("Path does not match the expected pattern");
+        }
+    }
+);
+
+export const makeSummary = functions.firestore.onDocumentCreated(
+    { document: "transcripts/{docId}", secrets: ["OPENAI_KEY"] },
+    async (event) => {
+        const snapshot = event.data;
+        if (!snapshot) {
+            logger.log("Empty transcript");
+            return;
+        }
+
+        const data = snapshot.data();
+        const transcript = data.transcript;
+        const openaiKey = process.env.OPENAI_KEY;
+
+        const updateData: Record<string, string> = {};
+
+        if (data.summary_generated) {
+            logger.log("Summary already generated");
+        } else {
+            // Perform the API request to Deepgram
+            const response = await axios.post(
+                "https://api.openai.com/v1/chat/completions",
+                {
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "Summarise the following:" },
+                        { role: "user", content: transcript },
+                    ],
+                    temperature: 0.2,
+                    max_tokens: 500
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${openaiKey}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const result = response.data;
+            
+            const summary = result?.choices?.[0]?.message.content;
+            if (summary) {
+                updateData["summary"] = summary;
+            } else {
+                logger.log("Error with summary API call");
+            }
+        }
+
+        if (data.dotpoint_generated) {
+            logger.log("Dotpoint already generated");
+        } else {
+            // Perform the API request to Deepgram
+            const response = await axios.post(
+                "https://api.openai.com/v1/chat/completions",
+                {
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "Create 3 dot points of the following:" },
+                        { role: "user", content: transcript },
+                    ],
+                    temperature: 0.2,
+                    max_tokens: 100
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${openaiKey}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const result = response.data;
+            
+            const dotpoint = result?.choices?.[0]?.message.content;
+            if (dotpoint) {
+                updateData["dotpoint"] = dotpoint;
+            } else {
+                logger.log("Error with summary API call");
+            }
+        }
+
+        if (Object.keys(updateData).length > 0) {
+            await snapshot.ref.update(updateData);
+            logger.log("Updated document with summary and/or dotpoint fields");
+        }
+
+        try {
+        } catch (error) {
+            return;
         }
     }
 );

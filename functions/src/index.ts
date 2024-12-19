@@ -214,10 +214,5 @@ export const makeSummary = functions.firestore.onDocumentCreated(
             await snapshot.ref.update(updateData);
             logger.log("Updated document with summary and/or dotpoint fields");
         }
-
-        try {
-        } catch (error) {
-            return;
-        }
     }
 );

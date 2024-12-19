@@ -11,10 +11,9 @@
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import { getStorage, ref, deleteObject } from "firebase/storage";
 import axios from "axios";
 
-const storage = getStorage();
+
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -121,13 +120,12 @@ export const createTranscript = functions.storage.onObjectFinalized(
 
                     functions.logger.log("Transcript saved to Firestore");
 
-                    const audioRef = ref(storage, 'images');
-
-                    deleteObject(audioRef).then(() => {
-                        logger.log("Deleted audio file")
-                    }).catch((error) => {
-                        logger.log("Failed to delete audio file");
-                    });
+                    try {
+                        await admin.storage().bucket(fileBucket).file(filePath).delete();
+                        logger.log("Deleted audio file successfully");
+                    } catch (error) {
+                        logger.error("Failed to delete audio file", error);
+                    }
                 } else {
                     functions.logger.log("No transcript found in the result");
                 }
@@ -164,7 +162,7 @@ export const makeSummary = functions.firestore.onDocumentCreated(
                 {
                     model: "gpt-4o-mini",
                     messages: [
-                        { role: "system", content: "Summarise the following:" },
+                        { role: "system", content: "Summarize the given audio transcript of an idea into one sentence. There may be typos in the transcript. Focus on specific details to distinguish it from potentially similar ideas. Start directly with the main idea, avoiding phrases like 'The idea is that' or 'The idea proposes that'." },
                         { role: "user", content: transcript },
                     ],
                     temperature: 0.2,

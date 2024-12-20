@@ -118,6 +118,8 @@ export const createTranscript = functions.storage.onObjectFinalized(
 
                     functions.logger.log("Transcript saved to Firestore");
 
+                    // Phasing out memo deletion due to design change to keep them listenable for user
+                    /*
                     try {
                         await admin
                             .storage()
@@ -128,6 +130,7 @@ export const createTranscript = functions.storage.onObjectFinalized(
                     } catch (error) {
                         logger.error("Failed to delete audio file", error);
                     }
+                    */
                 } else {
                     functions.logger.log("No transcript found in the result");
                 }

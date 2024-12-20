@@ -1,0 +1,26 @@
+.footer {
+    order: 1;
+    height: auto;
+    aspect-ratio: 7;
+
+    background-color: aqua;
+
+    display: flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer > button {
+    font-family: "Quicksand", sans-serif;
+    font-size: 2em;
+
+    border: none;
+
+    background: none;
+    height: 100%;
+    flex-grow: 1 1 0px;
+    width: auto;
+}

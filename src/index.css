@@ -1,5 +1,6 @@
 body {
     font-size: 62.5%;
+    background-color: var(--background-1);
 }
 
 @media (prefers-color-scheme: light) {

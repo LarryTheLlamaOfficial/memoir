@@ -1,11 +1,9 @@
 .footer {
-    order: 1;
-    height: auto;
+    height: 30px;
     aspect-ratio: 7;
 
     background-color: aqua;
 
-    display: flex;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;

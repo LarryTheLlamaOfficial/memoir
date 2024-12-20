@@ -3,6 +3,27 @@
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
+}
+
+.footer {
+    order: 1;
+    height: auto;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.panel {
+    height: 100px;
+
+    background-color: aqua;
+
+    display: flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
 }

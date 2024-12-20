@@ -4,46 +4,59 @@ import {
     signInWithEmailAndPassword,
     signOut,
     signInWithPopup,
+    onAuthStateChanged
 } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Auth() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    console.log(auth?.currentUser?.email);
-    console.log(auth.currentUser, auth);
+    // Monitor auth state changes
+    useEffect(() => {
+        const returnHome = onAuthStateChanged(auth, (user) => {
+            setIsLoading(false);
+            if (user) {
+                navigate("/home", { replace: true });
+            }
+        });
+
+        return () => returnHome();
+    }, [navigate]);
 
     const testUserSignIn = async () => {
         try {
+            setIsLoading(true);
             await signInWithEmailAndPassword(auth, "testing@gmail.com", "123456");
-            navigate("/home");
         } catch (err) {
             console.error(err);
             alert("Failed to sign in as test user.");
+        } finally {
+            setIsLoading(false);
         }
     };
-    
 
     const signUp = async () => {
         try {
-            await createUserWithEmailAndPassword(auth, email, password)
-            navigate("/home");
+            setIsLoading(true);
+            await createUserWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
             alert("Failed to create user");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const signIn = async () => {
         try {
-            await signInWithEmailAndPassword(auth, email, password).then(
-                () => {navigate("/home");})
+            setIsLoading(true);
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
             console.error(err);
-
             switch (err.code) {
                 case "auth/invalid-email":
                     alert("Invalid email.");
@@ -57,51 +70,73 @@ function Auth() {
                 default:
                     alert("Login failed. Please try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, googleProvider).then(
-                () => {navigate("/home");}
-            );
-            
+            setIsLoading(true);
+            await signInWithPopup(auth, googleProvider);
         } catch (err) {
             console.error(err);
+            alert("Google sign-in failed");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const logout = async () => {
         try {
-            await signOut(auth).then(
-                () => {navigate("/home");}
-            );
+            setIsLoading(true);
+            await signOut(auth);
+            navigate("/", { replace: true });
         } catch (err) {
             console.error(err);
+            alert("Logout failed");
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <>
-            { auth?.currentUser?.uid ? 
-                <button onClick={logout}>Logout</button>
-                :
+            {auth?.currentUser?.uid ? (
+                <button onClick={logout} disabled={isLoading}>
+                    Logout
+                </button>
+            ) : (
                 <div>
                     <input
-                    placeholder='Email...'
-                    onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email..."
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={isLoading}
                     />
                     <input
-                        placeholder='Password...'
+                        placeholder="Password..."
                         onChange={(e) => setPassword(e.target.value)}
-                        type='password'
+                        type="password"
+                        disabled={isLoading}
                     />
-                    <button onClick={signIn}>Sign In</button>
-                    <button onClick={signUp}>Sign Up</button>
-                    <button onClick={signInWithGoogle}>Sign In With Google</button>
-                    <button onClick={testUserSignIn}>Test User Sign In</button>
+                    <button onClick={signIn} disabled={isLoading}>
+                        Sign In
+                    </button>
+                    <button onClick={signUp} disabled={isLoading}>
+                        Sign Up
+                    </button>
+                    <button onClick={signInWithGoogle} disabled={isLoading}>
+                        Sign In With Google
+                    </button>
+                    <button onClick={testUserSignIn} disabled={isLoading}>
+                        Test User Sign In
+                    </button>
                 </div>
-            }
+            )}
         </>
     );
 }

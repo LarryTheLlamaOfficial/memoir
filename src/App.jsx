@@ -6,15 +6,19 @@ import Login from './pages/login/Login';
 import NoPage from './pages/nopage/NoPage';
 import Record from "./pages/record/Record";
 import TestGet from "./pages/testget/Testget";
+import Main from "./pages/main/Main";
 
 function App() {
+
+    
+
     return (
         <>
             <BrowserRouter>
                 <Routes>
                     <Route
                         index
-                        element={<Home />}
+                        element={<Main />}
                     ></Route>
                     <Route
                         path='/home'

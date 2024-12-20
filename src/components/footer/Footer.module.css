@@ -14,7 +14,7 @@
 
     padding: 12px;
 
-    box-shadow: 3px 3px 6px #00000011, -3px -3px 6px color-mix(in srgb, var(--background-2) 100%, transparent);
+    box-shadow: 3px 3px 12px #00000011, -3px -3px 12px #ffffffff;
 }
 
 .footer > button {
@@ -26,7 +26,7 @@
     padding: 12px;
 
     border-radius: 1000px;
-    box-shadow: inset 3px 3px 6px #00000011, inset -3px -3px 6px color-mix(in srgb, var(--background-2) 100%, transparent);
+    box-shadow: inset 3px 3px 6px #00000011, inset -3px -3px 6px #ffffffff;
 
     border: none;
 

@@ -22,7 +22,7 @@
 
     border-radius: 18px;
 
-    box-shadow: 3px 3px 6px #00000066, -3px -3px 6px color-mix(in srgb, var(--background-2) 100%, transparent);
+    box-shadow: 3px 3px 6px #00000066, -3px -3px 6px #ffffff55;
 
     display: flex;
     display: flex;

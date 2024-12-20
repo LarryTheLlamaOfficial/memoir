@@ -17,6 +17,8 @@ At the moment, the current functionality is the following:
 - Currently results are only visible from the backend, but here is an example of what the result looks like:
 ![image](https://github.com/user-attachments/assets/fcb9b4d4-48e0-4075-ba21-051f7d96bcf4)
 
+- The backend is currently whitelisted while it is in development. 
+
 ## Todo
 
 - Add visibility of memos and paginate.

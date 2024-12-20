@@ -29,7 +29,7 @@ function Auth() {
 
     const signUp = async () => {
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            await createUserWithEmailAndPassword(auth, email, password)
             navigate("/home");
         } catch (err) {
             console.error(err);
@@ -39,9 +39,8 @@ function Auth() {
 
     const signIn = async () => {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            
-            navigate("/home");
+            await signInWithEmailAndPassword(auth, email, password).then(
+                () => {navigate("/home");})
         } catch (err) {
             console.error(err);
 

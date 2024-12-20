@@ -1,4 +1,8 @@
 :root {
     --main-font: "Quicksand";
-    --background-1: #4C956C;
+    --background-1: #FFFFFF;
+    --background-2:  #FFFFFF;
+    --text: #000000;
+    --accent-1: #FF0000;
+    --accent-2: #00FF00;
 }

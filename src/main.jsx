@@ -4,7 +4,7 @@ import './index.css';
 import App from './App.jsx';
 
 // Slot for setting CSS variables
-const colorString = '042a2b-5eb1bf-54f2f2-fcfcfc-f4e04d';
+const colorString = 'efa7a7-fcbcb8-ffffff-c7eae4-a7e8bd';
 const colors = colorString.split('-');
 
 // Map colors to semantic variable names

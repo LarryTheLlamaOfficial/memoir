@@ -35,6 +35,7 @@ function AudioRecorder({
     const [audioChunks, setAudioChunks] = useState([]);
     const [audioBlob, setAudioBlob] = useState(null);
     const [audio, setAudio] = useState(null);
+    const [hasAudio, setHasAudio] = useState(false)
 
     const uploadAudio = async () => {
         const userId = auth?.currentUser?.uid;
@@ -71,6 +72,7 @@ function AudioRecorder({
 
     // Start the recording
     const startRecording = async () => {
+        setHasAudio(false)
         setRecordingStatus("recording");
         // Create new Media recorder instance using the stream and run
         const media = new MediaRecorder(stream, { type: mimeType });
@@ -88,6 +90,7 @@ function AudioRecorder({
     };
 
     const stopRecording = () => {
+        setHasAudio(true);
         setRecordingStatus("inactive");
         // Stops the recording instance
         mediaRecorder.current.stop();
@@ -108,6 +111,10 @@ function AudioRecorder({
         };
     };
 
+    const adaptedRecordText = () => {
+        return hasAudio ? 'Re-record' : 'Start Recording'
+    }
+
     return (
         <div>
             <h2>Audio Recorder</h2>
@@ -126,7 +133,7 @@ function AudioRecorder({
                             onClick={startRecording}
                             type='button'
                         >
-                            Start Recording
+                            {adaptedRecordText()}
                         </button>
                     ) : null}
                     {recordingStatus === "recording" ? (
@@ -137,9 +144,10 @@ function AudioRecorder({
                             Stop Recording
                         </button>
                     ) : null}
-                    <button onClick={uploadAudio}>
+                    {hasAudio ? <button onClick={uploadAudio}>
                         Upload
                     </button>
+                    : null}
                 </div>
             </main>
         </div>
